@@ -3,10 +3,9 @@
 version = 3
 
 [[package]]
-name = "about-this-linux-cli"
+name = "basefetch"
 version = "0.1.0"
 dependencies = [
- "cpuid",
  "lxinfo",
 ]
 
@@ -18,15 +17,6 @@ checksum = "da78b32057b8fdfc352504708feeba7216dcd65a2c9ab02978cbd288d1279b6c"
 dependencies = [
  "serde",
  "utf8-width",
-]
-
-[[package]]
-name = "cpuid"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a0c4b055219ace68cabfbb8071c4aad068565d11b67e092e151b17b9fd3bdba9"
-dependencies = [
- "libc",
 ]
 
 [[package]]
