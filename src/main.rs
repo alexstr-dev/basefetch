@@ -6,8 +6,9 @@ fn main() {
 }
 
 ///Printing system info. Commands make me want to rip my hair out
-fn print_information(){
-    let system_info = info::get_system_information().expect("Something went wrong. Please try again later!");
+fn print_information() {
+    let system_info =
+        info::get_system_information().expect("Something went wrong. Please try again later!");
     println!("ReFetch\n___________________");
     println!("{}@{}", system_info.username, system_info.hostname);
     println!("Distribution: {}", system_info.distro_name);
