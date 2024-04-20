@@ -2,22 +2,19 @@ mod utils;
 
 use lxinfo::info;
 use utils::CommandUtils;
+use std::fs::read_to_string;
+
 
 fn main() {
     print_information();
 }
 
-///Printing system info. Commands make me want to rip my hair out
-fn print_information() {
-    let to_print = replace_keys_and_return();
-    println!("{to_print}");
-}
-
 ///Replacing keys in the config file and returning to print
-fn replace_keys_and_return() -> String {
+fn print_information() {
     let system_info = info::get_system_information().expect("Something went wrong. Please try again later!");
-    let output = CommandUtils::get_command_output("cat ~/.config/basefetch/config");
-    let fuck_off = output.replace("{username}", &system_info.username)
+    let path = format!("{}/.config/basefetch/config", std::env::var("HOME").expect("Cant find config or path"));
+    let mut config = read_to_string(path).expect("An error has occured, please check your config");
+    config = config.replace("{username}", &system_info.username)
     .replace("{distro}", &system_info.distro_name)
     .replace("{hostname}", &system_info.hostname)
     .replace("{kernel}", &system_info.kernel)
@@ -29,5 +26,5 @@ fn replace_keys_and_return() -> String {
     .replace("{available_mem}", &system_info.available_mem)
     .replace("{cpu}", &CommandUtils::get_command_output("cpuid -1 | rg 'brand =' | cut -d '\"' -f2"))
     .replace("{gpu}", &CommandUtils::get_command_output("lspci -v -m | rg VGA -A 7 | rg Device | sed -n '1 p' | cut -d '[' -f2 | cut -d ']' -f1"));
-    return fuck_off;
+    println!("{config}");
 }
