@@ -1,9 +1,7 @@
 mod utils;
 
 use lxinfo::info;
-use utils::CommandUtils;
-use std::fs::read_to_string;
-
+use std::{fs::{read_to_string, self}, process::Command};
 
 fn main() {
     print_information();
@@ -14,6 +12,8 @@ fn print_information() {
     let system_info = info::get_system_information().expect("Something went wrong. Please try again later!");
     let path = format!("{}/.config/basefetch/config", std::env::var("HOME").expect("Cant find config or path"));
     let mut config = read_to_string(path).expect("An error has occured, please check your config");
+    let gpu = Command::new("sh").arg("-c").arg("lspci | grep \"VGA\" | cut -d'[' -f2 | cut -d']' -f1").output().expect("Error: command failed");
+    let cpu = Command::new("sh").arg("-c").arg("cpuid -1 | rg \'brand =\' | cut -d \'\"\' -f2").output().expect("Error: command failed");
     config = config.replace("{username}", &system_info.username)
     .replace("{distro}", &system_info.distro_name)
     .replace("{hostname}", &system_info.hostname)
@@ -24,7 +24,8 @@ fn print_information() {
     .replace("{used_mem}", &system_info.used_mem)
     .replace("{total_mem}", &system_info.total_mem)
     .replace("{available_mem}", &system_info.available_mem)
-    .replace("{cpu}", &CommandUtils::get_command_output("cpuid -1 | rg 'brand =' | cut -d '\"' -f2"))
-    .replace("{gpu}", &CommandUtils::get_command_output("lspci -v -m | rg VGA -A 7 | rg Device | sed -n '1 p' | cut -d '[' -f2 | cut -d ']' -f1"));
+    .replace("{cpu}", &String::from_utf8_lossy(&cpu.stdout).replace("\n", ""))
+    .replace("{gpu}", &String::from_utf8_lossy(&gpu.stdout).replace("\n", ""))
+    .replace("{packages}", &fs::read_dir("/var/lib/pacman/local").expect("Error: Directory not found!").count().to_string());
     println!("{config}");
 }
