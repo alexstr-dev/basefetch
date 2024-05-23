@@ -25,6 +25,7 @@ fn print_information() {
     .replace("{available_mem}", &system_info.available_mem)
     .replace("{cpu}", &CommandUtils::get_command_output("cpuid -1 | rg \'brand =\' | cut -d \'\"\' -f2"))
     .replace("{gpu}", &CommandUtils::get_command_output("lspci | grep \"VGA\" | cut -d'[' -f2 | cut -d']' -f1"))
-    .replace("{packages}", &fs::read_dir("/var/lib/pacman/local").expect("Error: Directory not found!").count().to_string());
+    .replace("{packages}", &fs::read_dir("/var/lib/pacman/local").expect("Error: Directory not found!").count().to_string())
+    .replace("{flatpak}", &CommandUtils::get_command_output("flatpak list | wc -l"));
     println!("{config}");
 }
